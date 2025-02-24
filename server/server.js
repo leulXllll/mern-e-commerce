@@ -1,17 +1,22 @@
-const {connectDb} = require('./config/db.js'); 
+const { connectDb } = require('./config/db.js');
 const router = require('./routes/index.js');
 const express = require('express');
 const cors = require('cors');
 const PORT = 4000 || process.env.PORT;
+
+
 
 require('dotenv').config();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors({origin:'http://127.0.0.1:5173'}));
+app.use(cors({ origin: 'http://127.0.0.1:5173' }));
 
-app.use('/api',router);
+
+
+
+app.use('/api', router);
 
 
 
@@ -23,7 +28,7 @@ startServer();
 
 async function startServer() {
     await connectDb();
-    app.listen(4000,()=>{
+    app.listen(4000, () => {
         console.log(`server running on port ${process.env.PORT || PORT}`);
     });
 }
