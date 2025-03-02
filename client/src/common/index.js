@@ -4,8 +4,11 @@ const allApi ={
     signup:{
         url:`${backendDomain}/api/signup`
     },
-    login:{
-        url:`${backendDomain}/api/login`
+    signin:{
+        url:`${backendDomain}/api/signin`
+    },
+    current_user:{
+        url:`${backendDomain}/api/user-details`,
     }
 };
 

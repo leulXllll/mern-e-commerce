@@ -26,8 +26,13 @@ async function userSignUpController(req, res) {
             throw new Error("Error generating password");
         }
 
+        console.log('profile pic is ',profilePic);
+
         const payload = {
-            ...req.body, password: hashedPassword
+            ...req.body,
+            role:"GENERAL", 
+            password: hashedPassword,
+            profilePic : profilePic
         }
 
         const user = new userModel(payload);
@@ -36,7 +41,7 @@ async function userSignUpController(req, res) {
 
         if (doc) {
             throw new Error("User Already exist");
-        }
+        }   
 
         console.log(JSON.stringify(doc));
 

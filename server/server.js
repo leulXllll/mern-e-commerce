@@ -2,17 +2,23 @@ const { connectDb } = require('./config/db.js');
 const router = require('./routes/index.js');
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+require('dotenv').config();
 const PORT = 4000 || process.env.PORT;
 
 
 
-require('dotenv').config();
 
 const app = express();
 
-app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(express.json({limit:'10mb'}));
+app.use(cookieParser());
 
+app.use(cors({
+     origin: 'http://localhost:5173',
+      credentials:true
+      }
+     ));
 
 
 

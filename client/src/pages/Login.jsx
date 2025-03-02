@@ -2,26 +2,72 @@ import LoginIcon from '../assets/user.gif';
 import { FaEye ,  FaEyeSlash  } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import UseFormInput from '../hooks/UseFormInput';
+import axios from 'axios';
+import allApi from '../common';
+import {toast} from 'react-toastify';
+import {useNavigate} from 'react-router-dom';
 
 const Login = () => {
 
-    const email = UseFormInput('');
-    const password = UseFormInput('');
+    const [userdata,setData] = useState({email:'',password:''});
 
     const [passwordToggle, setPasswordToggle] = useState(false);
 
+    const navigate = useNavigate();
 
     const handlePasswordChange = ()=>{
            setPasswordToggle(!passwordToggle);
     }
-   
+    
+    const handleChange = (e)=>{
 
-    const handleSubmit = ({e})=>{
+        let newUserData = {...userdata,[e.target.name]:e.target.value} 
+        setData(newUserData);
+    }
+
+    const handleSubmit = async(e)=>{
         e.preventDefault();
-        const {value} = email;
+
+        try{
+            console.log('user data is ',userdata);
+
+        let response = await axios.post(allApi.signin.url,userdata,{withCredentials:true, headers:{
+            'Content-Type':'application/json'
+        }}); 
+        if(response.data.success){
+            toast.success('Logged in sueccesfully', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
+                navigate('/');
+                
+        }
+
+        }catch(err){
+
+            if(err.response.data.error){
+                toast.error(err.response.data.message, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    });
+            }
+        }
 
     }
+
+
 
     return ( 
         <section id="login">
@@ -37,13 +83,13 @@ const Login = () => {
                     <div className='grid h-20'>
                         <label htmlFor="">Email :</label>
                         <div className='bg-slate-200 p-2'>
-                            <input {...email} name='email' type='email' placeholder='enter your email' className='w-full h-full outline-none bg-transparent'></input>
+                            <input value={userdata.email} onChange={handleChange} name='email' type='email' placeholder='enter your email' className='w-full h-full outline-none bg-transparent'></input>
                         </div>
                     </div>
                     <div>
                         <label htmlFor="">Password :</label>
                         <div className='bg-slate-200 p-2 flex'>
-                            <input {...password}  name='password' type={(passwordToggle)?'text':'password'} placeholder='enter your password' className='w-full h-full outline-none bg-transparent'></input>
+                            <input value={userdata.password}  onChange={handleChange} name='password' type={(passwordToggle)?'text':'password'} placeholder='enter your password' className='w-full h-full outline-none bg-transparent'></input>
                             <div className='flex items-center'>
                             {
                                (passwordToggle)?<span onClick={handlePasswordChange} className='cursor-pointer'>
