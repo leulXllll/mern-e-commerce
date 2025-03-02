@@ -1,30 +1,57 @@
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
 const userModel = require('../model/userModel');
+require('dotenv').config();
 
-const userSignInController = async(req,res)=>{
+const userSignInController = async (req, res) => {
 
-    const {email,password} = req.body;
+    try {
+        const { email, password } = req.body;
 
-    let user = await userModel.findOne({email});
-
-    if(user){
-
-        let isAuthenticated = await bcrypt.compare(password,user.password);
-
-
-        if(!isAuthenticated){
-            res.status(401).json({
-                error:true,
-                message:"Wrong Password"
-            })
+        if (!email) {
+            throw new Error("Please provide email");
         }
-        console.log('user has been authenticated');
-        
-        res.end();
-    }
+        if (!password) {
+            throw new Error("Please provide password");
+        }
 
-    res.end();
+
+        let user = await userModel.findOne({ email });
+
+        if (!user) {
+            throw new Error("There is no user with this account");
+        }
+
+        let isAuthenticated = await bcrypt.compare(password, user.password);
+
+        if (!isAuthenticated) {
+            throw new Error("Please check password");
+        }
+        
+        let token = jwt.sign({_id:user._id,email:user.email},process.env.TOKEN_KEY,{expiresIn: '1h'});
+
+        const cookieOption = {
+            httpOnly:true,
+            secure:true
+        };
+
+        res.cookie('token',token,cookieOption).json({
+            message:"Login successfully",
+            data: token,
+            success:true,
+            error:false
+        });
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
 
 };
 

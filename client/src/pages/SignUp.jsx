@@ -20,21 +20,6 @@ const SignUp = () => {
 
     const [passwordToggle, setPasswordToggle] = useState(false);
 
-    // if (data) {
-    //     console.log(data.success);
-
-    //     toast.success('🦄 Wow so easy!', {
-    //         position: "top-center",
-    //         autoClose: 5000,
-    //         hideProgressBar: false,
-    //         closeOnClick: false,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "light"
-    //     });
-    // }
-
     const handlePasswordChange = () => {
 
         setPasswordToggle(!passwordToggle);
@@ -110,7 +95,9 @@ const SignUp = () => {
 
         const convertedFile = await imageToBase64Converter(file);
 
-        let newData = { ...userData, [userData.profilePic]: convertedFile }
+        let newData = { ...userData, profilePic: convertedFile };
+
+
         setData(newData);
 
     }
@@ -119,7 +106,6 @@ const SignUp = () => {
 
         let newValue = { ...userData, [e.target.name]: e.target.value };
 
-        console.log('new value is ', newValue);
 
         setData(newValue);
 
