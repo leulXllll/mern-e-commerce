@@ -4,37 +4,47 @@ import './App.css'
 import Footer from './components/Footer';
 import { ToastContainer } from 'react-toastify';
 import allApi from './common';
-import {useEffect} from'react';
+import { useEffect } from 'react';
 import axios from 'axios';
+import Context from './context/index';
 
 function App() {
 
   async function fetchUserDetails(){
-    try{
-       let data = await axios.get(allApi.current_user.url,{withCredentials:true});
 
-      console.log(data);
+    try {
+      console.log('request made to user detail');
 
-    }catch(err){
+      let response = await axios.get(allApi.current_user.url, { withCredentials: true });
+
+      console.log('data is ',response.data);
+
+      return response.data.data;
+
+    }catch(err) {
+      console.log('some error happed here');
+
       console.log(err.message);
     }
   }
   useEffect(() => {
     /*user details*/
 
-      fetchUserDetails();
+    fetchUserDetails();
 
   }, []);
   return (
     <>
-      <div >
+        <Context.Provider value={{fetchUserDetails}}>
         <ToastContainer />
-        <Header />
-        <main className='min-h-[calc(100vh-120px)]'>
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
+
+          <Header />
+          <main className='min-h-[calc(100vh-120px)]'>
+            <Outlet />
+          </main>
+          <Footer />
+        </Context.Provider>
+
     </>
   )
 }

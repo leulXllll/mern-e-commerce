@@ -1,36 +1,46 @@
 const jwt = require('jsonwebtoken');
 
-async function authToken(req,res,next){
+async function authToken(req, res, next) {
 
-    try{
-        console.log('auh reached here');
-        // console.log('token is',req.cookie);
-        
-        console.log('tokenn is',tokenn);
-        let tokenn = req.cookie.token;
+    try {
 
-        const token = req.cookie?.token || req.header;
-        console.log('token is ',token);
+        let token = req.cookies['token'];
 
 
-        if(!token){
-            throw new Error("You are not authorized");
+        if (!token){
+            return res.json({
+                message: "User not Login",
+                error: true,
+                success: false
+            })
         }
-        
-        let decoded =  jwt.verify(token,process.env.TOKEN_KEY);
-        
-        // if(decoded)
 
-        console.log('data is ',decoded);
-        
+        jwt.verify(token, process.env.TOKEN_KEY, function (error, decode) {
 
-    }catch(error){
+            if (error) {
+               return res.json({
+                    message: 'User not authorized',
+                    error: true,
+                    success: false
+                });
+            }
+            // console.log('decoded value is ', decode);
+
+    
+            req.id= decode?._id;
+
+            next();
+
+        });
+
+    } catch (error) {
+
         res.status(400).json({
-            message:error.message,
-            error:true,
-            data:[],
-            success:false
+            message: error.message,
+            error: true,
+            data: [],
+            success: false
         })
     }
 }
-module.exports = {authToken};
+module.exports = { authToken };
